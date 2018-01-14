@@ -1,8 +1,10 @@
 export class Game extends Phaser.State {
   private actionButton: Phaser.Button;
+  private backgroundLayer: Phaser.TilemapLayer;
+  private collisionLayer: Phaser.TilemapLayer;
   private cursors: Phaser.CursorKeys;
   private leftArrow: Phaser.Button;
-  private platform: Phaser.Sprite;
+  private map: Phaser.Tilemap;
   private player: Phaser.Sprite;
   private rightArrow: Phaser.Button;
   private readonly JUMPING_SPEED = 500;
@@ -19,7 +21,7 @@ export class Game extends Phaser.State {
   }
 
   public update() {
-    this.game.physics.arcade.collide(this.player, this.platform);
+    this.physics.arcade.collide(this.player, this.collisionLayer);
 
     (this.player.body as Phaser.Physics.Arcade.Body).velocity.x = 0;
 
@@ -101,16 +103,23 @@ export class Game extends Phaser.State {
   }
 
   private loadLevel() {
-    this.player = this.add.sprite(100, 150, 'player', 3);
+    this.map = this.add.tilemap('level1');
+    this.map.addTilesetImage('tiles_spritesheet', 'gameTiles');
+
+    this.backgroundLayer = this.map.createLayer('backgroundLayer');
+    this.collisionLayer = this.map.createLayer('collisionLayer');
+
+    this.world.sendToBack(this.backgroundLayer);
+
+    this.map.setCollisionBetween(1, 160, true, 'collisionLayer');
+
+    this.collisionLayer.resizeWorld();
+
+    this.player = this.add.sprite(300, 0, 'player', 3);
     this.player.anchor.setTo(0.5);
     this.player.animations.add('walking', [0, 1, 2, 1], 6, true);
     this.game.physics.arcade.enable(this.player);
     (this.player.body as Phaser.Physics.Arcade.Body).collideWorldBounds = true;
-
-    this.platform = this.add.sprite(50, 180, 'platform');
-    this.game.physics.arcade.enable(this.platform);
-    (this.platform.body as Phaser.Physics.Arcade.Body).allowGravity = false;
-    (this.platform.body as Phaser.Physics.Arcade.Body).immovable = true;
 
     this.game.camera.follow(this.player);
   }

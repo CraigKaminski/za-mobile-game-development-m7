@@ -15,6 +15,9 @@ export class Preload extends Phaser.State {
     this.load.spritesheet('fly', 'images/fly_spritesheet.png', 35, 18, 2, 1, 2);
     this.load.image('arrowButton', 'images/arrowButton.png');
     this.load.image('actionButton', 'images/actionButton.png');
+
+    this.load.image('gameTiles', 'images/tiles_spritesheet.png');
+    this.load.tilemap('level1', 'levels/demo-level.json', null, Phaser.Tilemap.TILED_JSON);
   }
 
   public create() {
