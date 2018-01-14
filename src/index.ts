@@ -4,11 +4,14 @@ import 'pixi';
 import 'phaser';
 // tslint:enable:ordered-imports
 
+import { getGameLandscapeDimensions } from './scaler';
 import { Boot } from './states/Boot';
 import { Game } from './states/Game';
 import { Preload } from './states/Preload';
 
-const game = new Phaser.Game(480, 360, Phaser.AUTO, '', null);
+const dim = getGameLandscapeDimensions(700, 350);
+
+const game = new Phaser.Game(dim.w, dim.h, Phaser.AUTO, '', null);
 
 game.state.add('Boot', Boot);
 game.state.add('Game', Game);
