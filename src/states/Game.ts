@@ -115,7 +115,8 @@ export class Game extends Phaser.State {
 
     this.collisionLayer.resizeWorld();
 
-    this.player = this.add.sprite(300, 0, 'player', 3);
+    this.map.createFromObjects('objectsLayer', 147, 'player');
+    this.player = this.world.getByName('player');
     this.player.anchor.setTo(0.5);
     this.player.animations.add('walking', [0, 1, 2, 1], 6, true);
     this.game.physics.arcade.enable(this.player);
