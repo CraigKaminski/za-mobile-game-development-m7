@@ -59,6 +59,10 @@ export class Game extends Phaser.State {
       (this.player.body as Phaser.Physics.Arcade.Body).velocity.y = -this.JUMPING_SPEED;
       this.player.data.mustJump = false;
     }
+
+    if (this.player.bottom === this.game.world.height) {
+      this.gameOver();
+    }
   }
 
   private changeLevel(player: Phaser.Sprite, goal: Phaser.Sprite) {
