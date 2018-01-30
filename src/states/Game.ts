@@ -12,6 +12,7 @@ export class Game extends Phaser.State {
   private map: Phaser.Tilemap;
   private player: Phaser.Sprite;
   private rightArrow: Phaser.Button;
+  private readonly BOUNCING_SPEED = 150;
   private readonly JUMPING_SPEED = 500;
   private readonly RUNNING_SPEED = 180;
 
@@ -30,6 +31,8 @@ export class Game extends Phaser.State {
   public update() {
     this.physics.arcade.collide(this.player, this.collisionLayer);
     this.physics.arcade.collide(this.enemies, this.collisionLayer);
+
+    this.physics.arcade.collide(this.player, this.enemies, this.hitEnemy, undefined, this);
 
     this.physics.arcade.overlap(this.player, this.goal, this.changeLevel, undefined, this);
 
@@ -136,6 +139,19 @@ export class Game extends Phaser.State {
     });
 
     return result;
+  }
+
+  private gameOver() {
+    this.state.start('Game', true, false, this.currentLevel);
+  }
+
+  private hitEnemy(player: Phaser.Sprite, enemy: Phaser.Sprite) {
+    if (enemy.body.touching.up) {
+      enemy.kill();
+      player.body.velocity.y = -this.BOUNCING_SPEED;
+    } else {
+      this.gameOver();
+    }
   }
 
   private loadLevel() {
