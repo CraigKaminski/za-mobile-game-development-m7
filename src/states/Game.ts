@@ -62,6 +62,15 @@ export class Game extends Phaser.State {
     this.state.start('Game', true, false, (goal as any).nextLevel);
   }
 
+  private createEnemies() {
+    const enemyArr: any[] = this.findObjectsByType('enemy', this.map, 'objectsLayer');
+
+    enemyArr.forEach((element: any) => {
+      const enemy = new Enemy(this.game, element.x, element.y, 'slime', +element.properties.speed, this.map);
+      this.enemies.add(enemy);
+    });
+  }
+
   private createOnScreenControls() {
     this.leftArrow = this.add.button(20, this.game.height - 60, 'arrowButton');
     this.rightArrow = this.add.button(110, this.game.height - 60, 'arrowButton');
@@ -116,6 +125,19 @@ export class Game extends Phaser.State {
     }, this);
   }
 
+  private findObjectsByType(targetType: string, tilemap: Phaser.Tilemap, layer: string) {
+    const result: any[] = [];
+
+    (tilemap.objects as any)[layer].forEach((element: any) => {
+      if (element.properties.type === targetType) {
+        element.y -= tilemap.tileHeight;
+        result.push(element);
+      }
+    });
+
+    return result;
+  }
+
   private loadLevel() {
     this.map = this.add.tilemap(this.currentLevel);
     this.map.addTilesetImage('tiles_spritesheet', 'gameTiles');
@@ -144,7 +166,6 @@ export class Game extends Phaser.State {
     this.game.camera.follow(this.player);
 
     this.enemies = this.add.group();
-    const sampleEnemy = new Enemy(this.game, 100, 300, 'slime', undefined, this.map);
-    this.enemies.add(sampleEnemy);
+    this.createEnemies();
   }
 }

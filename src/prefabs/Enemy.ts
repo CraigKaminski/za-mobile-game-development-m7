@@ -14,7 +14,7 @@ export default class Enemy extends Phaser.Sprite {
     this.tilemap = tilemap;
     this.anchor.setTo(0.5);
 
-    if (velocity === undefined) {
+    if (!velocity) {
       velocity = (40 + Math.random() * 20) * (Math.random() < 0.5 ? 1 : -1);
     }
 
