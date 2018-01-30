@@ -978,7 +978,7 @@
     <property name="Velocity" value="100"/>
    </properties>
   </object>
-  <object id="3" type="goal" gid="148" x="971" y="171" width="35" height="35">
+  <object id="3" name="goal" type="goal" gid="148" x="971" y="171" width="35" height="35">
    <properties>
     <property name="NextLevel" value="level2"/>
    </properties>

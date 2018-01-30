@@ -1,8 +1,13 @@
+import Enemy from '../prefabs/Enemy';
+
 export class Game extends Phaser.State {
   private actionButton: Phaser.Button;
   private backgroundLayer: Phaser.TilemapLayer;
   private collisionLayer: Phaser.TilemapLayer;
+  private currentLevel: string;
   private cursors: Phaser.CursorKeys;
+  private enemies: Phaser.Group;
+  private goal: Phaser.Sprite;
   private leftArrow: Phaser.Button;
   private map: Phaser.Tilemap;
   private player: Phaser.Sprite;
@@ -10,7 +15,9 @@ export class Game extends Phaser.State {
   private readonly JUMPING_SPEED = 500;
   private readonly RUNNING_SPEED = 180;
 
-  public init() {
+  public init(level: string) {
+    this.currentLevel = level || 'level1';
+
     this.physics.arcade.gravity.y = 1000;
     this.cursors = this.input.keyboard.createCursorKeys();
   }
@@ -22,6 +29,9 @@ export class Game extends Phaser.State {
 
   public update() {
     this.physics.arcade.collide(this.player, this.collisionLayer);
+    this.physics.arcade.collide(this.enemies, this.collisionLayer);
+
+    this.physics.arcade.overlap(this.player, this.goal, this.changeLevel, undefined, this);
 
     (this.player.body as Phaser.Physics.Arcade.Body).velocity.x = 0;
 
@@ -46,6 +56,10 @@ export class Game extends Phaser.State {
       (this.player.body as Phaser.Physics.Arcade.Body).velocity.y = -this.JUMPING_SPEED;
       this.player.data.mustJump = false;
     }
+  }
+
+  private changeLevel(player: Phaser.Sprite, goal: Phaser.Sprite) {
+    this.state.start('Game', true, false, (goal as any).nextLevel);
   }
 
   private createOnScreenControls() {
@@ -103,7 +117,7 @@ export class Game extends Phaser.State {
   }
 
   private loadLevel() {
-    this.map = this.add.tilemap('level1');
+    this.map = this.add.tilemap(this.currentLevel);
     this.map.addTilesetImage('tiles_spritesheet', 'gameTiles');
 
     this.backgroundLayer = this.map.createLayer('backgroundLayer');
@@ -115,6 +129,11 @@ export class Game extends Phaser.State {
 
     this.collisionLayer.resizeWorld();
 
+    this.map.createFromObjects('objectsLayer', 148, 'goal');
+    this.goal = this.world.getByName('goal');
+    this.physics.arcade.enable(this.goal);
+    (this.goal.body as Phaser.Physics.Arcade.Body).allowGravity = false;
+
     this.map.createFromObjects('objectsLayer', 147, 'player');
     this.player = this.world.getByName('player');
     this.player.anchor.setTo(0.5);
@@ -123,5 +142,9 @@ export class Game extends Phaser.State {
     (this.player.body as Phaser.Physics.Arcade.Body).collideWorldBounds = true;
 
     this.game.camera.follow(this.player);
+
+    this.enemies = this.add.group();
+    const sampleEnemy = new Enemy(this.game, 100, 300, 'slime', undefined, this.map);
+    this.enemies.add(sampleEnemy);
   }
 }

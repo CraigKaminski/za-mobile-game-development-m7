@@ -17,7 +17,8 @@ export class Preload extends Phaser.State {
     this.load.image('actionButton', 'images/actionButton.png');
 
     this.load.image('gameTiles', 'images/tiles_spritesheet.png');
-    this.load.tilemap('level1', 'levels/demo-level.json', null, Phaser.Tilemap.TILED_JSON);
+    this.load.tilemap('level1', 'levels/level1.json', null, Phaser.Tilemap.TILED_JSON);
+    this.load.tilemap('level2', 'levels/level2.json', null, Phaser.Tilemap.TILED_JSON);
   }
 
   public create() {
